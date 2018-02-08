@@ -17,6 +17,7 @@ class OrderSummary extends Component {
         });
         return (
             <React.Fragment>
+                <h2>Your order:</h2>
                 <p>A delicious burger with the following ingredients: </p>
                 <ul>{summaryOrder}</ul>
                 <h4>Total Price: {this.props.price.toFixed(2)}</h4>

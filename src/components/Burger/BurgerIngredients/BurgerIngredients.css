@@ -185,7 +185,7 @@
     z-index: 12;
 }
 
-.Melt {
+/* .Melt {
     animation: 5s melting ease infinite;
     background: #ffb400;
     border-radius: 100px;
@@ -222,7 +222,7 @@
     100% {
         transform: translateY(15px);
     }
-}
+} */
 
 .Bacon {
     background: linear-gradient(#bf3813, #c45e38);
