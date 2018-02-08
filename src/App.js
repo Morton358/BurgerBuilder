@@ -1,20 +1,22 @@
 import React, { Component } from 'react';
-import './App.css';
-
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+import Layout from './containers/Layout/Layout';
+import BurgerBuilder from './containers/BurgerBuilder/BurgerBuilder';
 
 class App extends Component {
-  state = {
+    state = {};
 
-  }
-
-  render() {
-    return (
-      <div className="App">
-        <h1>Hi I am React App!</h1>
-      
-      </div>
-    );
-  }
+    render() {
+        return (
+            <MuiThemeProvider>
+                <div>
+                    <Layout>
+                        <BurgerBuilder />
+                    </Layout>
+                </div>
+            </MuiThemeProvider>
+        );
+    }
 }
 
 export default App;

@@ -1,0 +1,17 @@
+.Menu {
+    background-color: Transparent;
+    background-repeat:no-repeat;
+    border: none;
+    cursor:pointer;
+    outline:none;
+    overflow: hidden;
+    color: white;
+    display: flex;
+    align-items: center;
+}
+
+@media (min-width: 501px) and (max-width: 1500px) {
+    .Menu {
+        display: none;
+    }
+}
