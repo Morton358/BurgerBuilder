@@ -19,19 +19,24 @@ const INGGREDIENTS_PRICES = {
 
 class BurgerBuilder extends Component {
     state = {
-        ingredients: {
-            Tomato: 0,
-            Onion: 0,
-            Salad: 0,
-            Cheese: 0,
-            Bacon: 0,
-            Meat: 0
-        },
+        ingredients: null,
         totalPrice: 10,
         forSale: false,
         openModal: false,
-        loading: false
+        loading: false,
+        errorOccured: false
     };
+
+    componentDidMount() {
+        axios
+            .get('/ingredients.json')
+            .then(response => {
+                this.setState({ ingredients: response.data });
+            })
+            .catch(error => {
+                this.setState({ errorOccured: true });
+            });
+    }
 
     updateForSaleState(obj) {
         const sum = Object.values(obj).reduce((acc, el) => {
@@ -76,7 +81,7 @@ class BurgerBuilder extends Component {
     };
 
     handleSubmitOrder = () => {
-        this.setState({loading: true})
+        this.setState({ loading: true });
         const data = {
             ingredients: this.state.ingredients,
             price: this.state.totalPrice,
@@ -94,22 +99,16 @@ class BurgerBuilder extends Component {
         axios
             .post('/orders.json', data)
             .then(response => {
-                this.setState({loading: false, openModal: false})
+                this.setState({ loading: false, openModal: false });
                 console.log(response);
             })
             .catch(error => {
-                this.setState({loading: false, openModal: false})
+                this.setState({ loading: false, openModal: false });
                 console.log(error);
             });
     };
 
     render() {
-        const arrIngredients = Object.keys(this.state.ingredients);
-
-        const disabledInfo = { ...this.state.ingredients };
-        for (let key in disabledInfo) {
-            disabledInfo[key] = disabledInfo[key] <= 0;
-        }
         const modalButtons = [
             <FlatButton
                 label="Cancel"
@@ -123,47 +122,66 @@ class BurgerBuilder extends Component {
             />
         ];
 
-        let orderBurger = (
-            <Modal
-                open={this.state.openModal}
-                close={this.handleCloseModal}
-                buttons={modalButtons.map(el => el)}
-            >
-                <OrderSummary
-                    ingredients={this.state.ingredients}
-                    price={this.state.totalPrice}
-                />
-            </Modal>
+        let orderBurger = null;
+        let burger = this.state.errorOccured ? (
+            <h2>I can not download ingredients from the server! </h2>
+        ) : (
+            <Spinner />
         );
-        if (this.state.loading) {
+
+        if (this.state.ingredients) {
+            const arrIngredients = Object.keys(this.state.ingredients);
+
+            const disabledInfo = { ...this.state.ingredients };
+            for (let key in disabledInfo) {
+                disabledInfo[key] = disabledInfo[key] <= 0;
+            }
+            burger = (
+                <React.Fragment>
+                    <div>
+                        <Burger ingredients={this.state.ingredients} />
+                    </div>
+                    <div>
+                        <BuildControls
+                            forElements={arrIngredients}
+                            ingredientAdder={this.addIngredientHandler}
+                            ingredientRemover={this.removeIngredientHandler}
+                            disable={disabledInfo}
+                            price={this.state.totalPrice}
+                            forSale={this.state.forSale}
+                            order={this.handleOpenModal}
+                        />
+                    </div>
+                </React.Fragment>
+            );
             orderBurger = (
                 <Modal
                     open={this.state.openModal}
                     close={this.handleCloseModal}
-                    buttons={null}
+                    buttons={modalButtons.map(el => el)}
                 >
-                    <Spinner />
+                    <OrderSummary
+                        ingredients={this.state.ingredients}
+                        price={this.state.totalPrice}
+                    />
                 </Modal>
-            )
+            );
+            if (this.state.loading) {
+                orderBurger = (
+                    <Modal
+                        open={this.state.openModal}
+                        close={this.handleCloseModal}
+                        buttons={null}
+                    >
+                        <Spinner />
+                    </Modal>
+                );
+            }
         }
-
         return (
             <React.Fragment>
                 {orderBurger}
-                <div>
-                    <Burger ingredients={this.state.ingredients} />
-                </div>
-                <div>
-                    <BuildControls
-                        forElements={arrIngredients}
-                        ingredientAdder={this.addIngredientHandler}
-                        ingredientRemover={this.removeIngredientHandler}
-                        disable={disabledInfo}
-                        price={this.state.totalPrice}
-                        forSale={this.state.forSale}
-                        order={this.handleOpenModal}
-                    />
-                </div>
+                {burger}
             </React.Fragment>
         );
     }

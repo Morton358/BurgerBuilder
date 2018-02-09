@@ -5,32 +5,39 @@ const withErrorHandler = (WrappedComponents, axios) => {
     return class extends Component {
 
         state = {
-            error: null
+            error: null,
+            errorOccured: false
         }
 
-        componentDidMount() {
-            axios.interceptors.request.use(req => {
-                this.setState({error: null})
+        componentWillMount() {
+            this.reqInterceptor = axios.interceptors.request.use(req => {
+                this.setState({error: null, errorOccured: false})
                 return req;
             });
-            axios.interceptors.response.use(res => res, error => {
-                this.setState({error: error})
+            this.resInterceptor = axios.interceptors.response.use(res => res, error => {
+                this.setState({error: error, errorOccured: true})
             });
+        }
+
+        componentWillUnmount() {
+            axios.interceptors.request.eject(this.reqInterceptor);
+            axios.interceptors.response.eject(this.resInterceptor);
+
         }
 
         errorConfirmedHandler = () => {
-            this.setState({error: null})
+            this.setState({error: null, errorOccured: false})
         }
 
         render () {
             return (
                 <React.Fragment>
                     <Modal
-                        open={this.state.error}
+                        open={this.state.errorOccured}
                         close={this.errorConfirmedHandler}
                         buttons={null}
                     >
-                        {this.state.error ? this.state.error.message: null}
+                        {this.state.errorOccured ? this.state.error.message: null}
                     </Modal>
                     <WrappedComponents {...this.props} />
                 </React.Fragment>
