@@ -80,32 +80,21 @@ class BurgerBuilder extends Component {
         this.setState({ openModal: false });
     };
 
-    handleSubmitOrder = () => {
-        this.setState({ loading: true });
-        const data = {
-            ingredients: this.state.ingredients,
-            price: this.state.totalPrice,
-            customer: {
-                name: 'Ivan Zakolupenko',
-                address: {
-                    street: 'Barska 6',
-                    zipCode: '27096',
-                    city: 'Wrocław'
-                },
-                email: 'test@test.com'
-            },
-            deliveryMethod: 'fastest'
-        };
-        axios
-            .post('/orders.json', data)
-            .then(response => {
-                this.setState({ loading: false, openModal: false });
-                console.log(response);
-            })
-            .catch(error => {
-                this.setState({ loading: false, openModal: false });
-                console.log(error);
-            });
+    handleCheckoutOrder = () => {
+        const queryParams = [];
+        for (let i in this.state.ingredients) {
+            queryParams.push(
+                encodeURIComponent(i) +
+                    '=' +
+                    encodeURIComponent(this.state.ingredients[i])
+            );
+        }
+        queryParams.push('price=' + this.state.totalPrice);
+        const queryString = queryParams.join('&');
+        this.props.history.push({
+            pathname: '/checkout',
+            search: '?' + queryString
+        });
     };
 
     render() {
@@ -118,7 +107,7 @@ class BurgerBuilder extends Component {
             <FlatButton
                 label="Submit"
                 primary={true}
-                onClick={this.handleSubmitOrder}
+                onClick={this.handleCheckoutOrder}
             />
         ];
 

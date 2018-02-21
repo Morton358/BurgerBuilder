@@ -4,9 +4,6 @@ import PropTypes from 'prop-types';
 /*eslint indent: ["error", 4, { "SwitchCase": 1 }]*/
 
 class BurgerIngredients extends Component {
-    constructor(props) {
-        super(props);
-    }
     render() {
         let ingredient = null;
 
