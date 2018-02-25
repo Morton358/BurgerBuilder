@@ -2,19 +2,19 @@
     box-sizing: border-box;
     padding: 10px;
     width: 100%;
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: center;
 }
 
 .Label {
-    display: block;
     font-weight: bold;
-    margin-bottom: 8px;
+    margin-bottom: 5px;
 }
 
 .InputElement {
     background-color: white;
     border: 1px solid #ccc;
-    box-sizing: border-box;
-    display: block;
     font: inherit;
     outline: none;
     padding: 6px 10px;
@@ -26,7 +26,25 @@
     outline: none;
 }
 
+.InputElement[type='number']::-webkit-outer-spin-button,
+.InputElement[type='number']::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+.InputElement[type='number'] {
+    -moz-appearance: textfield;
+}
+
+.InputElement[type='radio'] {
+    width: 50%;
+}
+
 .Invalid {
     border: 1px solid red;
     background-color: rgba(230, 178, 177, 0.7);
 }
+
+/* .Deactivate {
+    pointer-events:none;
+    background-color: #ccc;
+} */
