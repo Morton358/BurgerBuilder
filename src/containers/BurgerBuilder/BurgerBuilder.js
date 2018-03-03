@@ -5,28 +5,19 @@ import Burger from '../../components/Burger/Burger';
 import BuildControls from '../../components/Burger/BuildControls/BuildControls';
 import Modal from '../../components/UI/Modal/Modal.js';
 import OrderSummary from '../../components/Burger/OrderSummary/OrderSummary';
-import axios from '../../axios-order';
 import Spinner from '../../components/UI/Spinner/Spinner';
 import FlatButton from 'material-ui/FlatButton';
 import withErrorHandler from '../withErrorHandler/withErrorHandler';
-import * as actionTypes from '../../store/actions';
+import axios from '../../axios-order';
+import * as actions from '../../store/actions/index';
 
 class BurgerBuilder extends Component {
     state = {
-        openModal: false,
-        loading: false,
-        errorOccured: false
+        openModal: false
     };
 
     componentDidMount() {
-        // axios
-        //     .get('/ingredients.json')
-        //     .then(response => {
-        //         this.setState({ ingredients: response.data });
-        //     })
-        //     .catch(error => {
-        //         this.setState({ errorOccured: true });
-        //     });
+        this.props.onInitIngredients();
     }
 
     updateForSaleState(obj) {
@@ -45,6 +36,7 @@ class BurgerBuilder extends Component {
     };
 
     handleCheckoutOrder = () => {
+        this.props.onInitPurchase();
         this.props.history.push('/checkout');
     };
 
@@ -63,7 +55,7 @@ class BurgerBuilder extends Component {
         ];
 
         let orderBurger = null;
-        let burger = this.state.errorOccured ? (
+        let burger = this.props.error ? (
             <h2>I can not download ingredients from the server! </h2>
         ) : (
             <Spinner />
@@ -106,17 +98,6 @@ class BurgerBuilder extends Component {
                     />
                 </Modal>
             );
-            if (this.state.loading) {
-                orderBurger = (
-                    <Modal
-                        open={this.state.openModal}
-                        close={this.handleCloseModal}
-                        buttons={null}
-                    >
-                        <Spinner />
-                    </Modal>
-                );
-            }
         }
         return (
             <React.Fragment>
@@ -127,35 +108,23 @@ class BurgerBuilder extends Component {
     }
 }
 
-
 const mapStateToProps = state => {
     return {
-        ings: state.ingredients,
-        price: state.totalPrice
+        ings: state.burgerBuilder.ingredients,
+        price: state.burgerBuilder.totalPrice,
+        error: state.burgerBuilder.error
     };
 };
 
 const mapDispatchToProps = dispatch => {
     return {
         onIngredientAdded: ingName =>
-            dispatch({
-                type: actionTypes.ADD_INGREDIENT,
-                ingredientName: ingName
-            }),
+            dispatch(actions.addIngredient(ingName)),
         onIngredientRemove: ingName =>
-            dispatch({
-                type: actionTypes.REMOVE_INGREDIENT,
-                ingredientName: ingName
-            }),
-
-        // saveDataForCheckot: () =>
-        //     dispatch({
-        //         type: actionTypes.SEND_CHECKOUT_DATA,
-        //         data: {
-        //             ingredients: this.state.ingredients,
-        //             totalPrice: this.state.totalPrice
-        //         }
-        //     })
+            dispatch(actions.removeIngredient(ingName)),
+        onInitIngredients: () =>
+            dispatch(actions.initIngredients()),
+        onInitPurchase: () => dispatch(actions.purchaseInit())
     };
 };
 export default connect(mapStateToProps, mapDispatchToProps)(
