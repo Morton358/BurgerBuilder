@@ -148,6 +148,7 @@ class ContactData extends Component {
     handleOrder = event => {
         event.preventDefault();
         const formData = {};
+        const currentDate = new Date().toString();
         const inputs = this.state.activeInputs.filter(el => {
             return el !== 'preferedPhone' && el !== 'preferedEmail';
         })
@@ -159,11 +160,10 @@ class ContactData extends Component {
         const data = {
             ingredients: this.props.ings,
             price: this.props.price,
-            orderData: formData
+            orderData: formData,
+            date: currentDate
         };
-
         this.props.onOrderBurger(data);
-
     };
 
     handleInput = (event, inputIdentifier) => {

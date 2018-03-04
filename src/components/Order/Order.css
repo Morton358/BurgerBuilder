@@ -5,6 +5,15 @@
     padding: 10px;
     margin: 10px auto;
     box-sizing: border-box;
+}
 
-
+.Detail {
+    background-color: Transparent;
+    background-repeat:no-repeat;
+    border: none;
+    cursor:pointer;
+    outline:none;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
 }
