@@ -28,7 +28,12 @@ class BurgerBuilder extends Component {
     }
 
     handleOpenModal = () => {
-        this.setState({ openModal: true });
+        if (this.props.isAuthenticated) {
+            this.setState({ openModal: true });
+        } else {
+            this.props.onSetAuthRedirectPath('/checkout')
+            this.props.history.push('/auth');
+        }
     };
 
     handleCloseModal = () => {
@@ -75,6 +80,7 @@ class BurgerBuilder extends Component {
                     </div>
                     <div>
                         <BuildControls
+                            isAuth={this.props.isAuthenticated}
                             forElements={arrIngredients}
                             ingredientAdder={this.props.onIngredientAdded}
                             ingredientRemover={this.props.onIngredientRemove}
@@ -112,19 +118,20 @@ const mapStateToProps = state => {
     return {
         ings: state.burgerBuilder.ingredients,
         price: state.burgerBuilder.totalPrice,
-        error: state.burgerBuilder.error
+        error: state.burgerBuilder.error,
+        isAuthenticated: state.auth.token !== null
     };
 };
 
 const mapDispatchToProps = dispatch => {
     return {
-        onIngredientAdded: ingName =>
-            dispatch(actions.addIngredient(ingName)),
+        onIngredientAdded: ingName => dispatch(actions.addIngredient(ingName)),
         onIngredientRemove: ingName =>
             dispatch(actions.removeIngredient(ingName)),
-        onInitIngredients: () =>
-            dispatch(actions.initIngredients()),
-        onInitPurchase: () => dispatch(actions.purchaseInit())
+        onInitIngredients: () => dispatch(actions.initIngredients()),
+        onInitPurchase: () => dispatch(actions.purchaseInit()),
+        onSetAuthRedirectPath: path =>
+            dispatch(actions.setAuthRedirectPath(path))
     };
 };
 export default connect(mapStateToProps, mapDispatchToProps)(

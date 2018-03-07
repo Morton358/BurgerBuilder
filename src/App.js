@@ -1,25 +1,47 @@
 import React, { Component } from 'react';
-import { Switch, Route } from 'react-router-dom';
+import { Switch, Route, withRouter, Redirect } from 'react-router-dom';
+import { connect } from 'react-redux';
 
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import Layout from './containers/Layout/Layout';
 import BurgerBuilder from './containers/BurgerBuilder/BurgerBuilder';
 import Checkout from './containers/Checkout/Checkout';
 import Orders from './containers/Orders/Orders';
+import Auth from './containers/Auth/Auth';
+import Logout from './containers/Auth/Logout/Logout';
+import * as actions from './store/actions/index';
 
 class App extends Component {
     state = {};
 
+    componentDidMount() {
+        this.props.onTryAutoSignIn();
+    }
+
     render() {
+        let routes = (
+            <Switch>
+                <Route path="/auth" component={Auth} />
+                <Route path="/" exact component={BurgerBuilder} />
+                <Redirect to ="/" />
+            </Switch>
+        );
+        if (this.props.isAuthenticated) {
+            routes = (
+                <Switch>
+                    <Route path="/checkout" component={Checkout} />
+                    <Route path="/orders" component={Orders} />
+                    <Route path="/logout" component={Logout} />
+                    <Route path="/" exact component={BurgerBuilder} />
+                    <Redirect to ="/" />
+                </Switch>
+            );
+        }
         return (
             <MuiThemeProvider>
                 <div>
                     <Layout>
-                        <Switch>
-                            <Route path="/checkout" component={Checkout} />
-                            <Route path="/orders" component={Orders} />
-                            <Route path="/" exact component={BurgerBuilder} />
-                        </Switch>
+                        {routes}
                     </Layout>
                 </div>
             </MuiThemeProvider>
@@ -27,4 +49,16 @@ class App extends Component {
     }
 }
 
-export default App;
+const mapStateToProps = state => {
+    return {
+        isAuthenticated: state.auth.token !== null
+    }
+}
+
+const mapDispatchToProps = dispatch => {
+    return {
+        onTryAutoSignIn: () => dispatch(actions.authCheckState())
+    }
+}
+
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(App));

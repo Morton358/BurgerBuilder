@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import FlatButton from 'material-ui/FlatButton';
 
 import axios from '../../../axios-order';
 import Spinner from '../../../components/UI/Spinner/Spinner';
-import FlatButton from 'material-ui/FlatButton';
 import Input from '../../../components/UI/Input/Input';
 import classes from './ContactData.css';
 import withErrorHandler from '../../withErrorHandler/withErrorHandler';
@@ -42,14 +42,15 @@ class ContactData extends Component {
             zipCode: {
                 elementType: 'input',
                 elementConfig: {
-                    type: 'text',
+                    type: 'number',
                     placeholder: 'ZIP Code'
                 },
                 value: '',
                 validation: {
                     required: true,
                     minLength: 5,
-                    maxLength: 5
+                    maxLength: 5,
+                    isNumeric: true
                 },
                 valid: false,
                 touched: false
@@ -100,7 +101,8 @@ class ContactData extends Component {
                 },
                 value: '',
                 validation: {
-                    required: true
+                    required: true,
+                    isEmail: true
                 },
                 valid: false,
                 touched: false
@@ -115,7 +117,8 @@ class ContactData extends Component {
                 validation: {
                     required: true,
                     minLength: 9,
-                    maxLength: 9
+                    maxLength: 9,
+                    isNumeric: true
                 },
                 valid: false,
                 touched: false
@@ -151,7 +154,7 @@ class ContactData extends Component {
         const currentDate = new Date().toString();
         const inputs = this.state.activeInputs.filter(el => {
             return el !== 'preferedPhone' && el !== 'preferedEmail';
-        })
+        });
         for (let formElemIndentifier of inputs) {
             formData[formElemIndentifier] = this.state.orderForm[
                 formElemIndentifier
@@ -163,7 +166,7 @@ class ContactData extends Component {
             orderData: formData,
             date: currentDate
         };
-        this.props.onOrderBurger(data);
+        this.props.onOrderBurger(data, this.props.token);
     };
 
     handleInput = (event, inputIdentifier) => {
@@ -228,6 +231,16 @@ class ContactData extends Component {
             isValid = value.length <= rules.maxLength && isValid;
         }
 
+        if (rules.isEmail) {
+            const pattern = /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/;
+            isValid = pattern.test(value) && isValid;
+        }
+
+        if (rules.isNumeric) {
+            const pattern = /^\d+$/;
+            isValid = pattern.test(value) && isValid;
+        }
+
         return isValid;
     }
 
@@ -284,14 +297,18 @@ const mapStateToProps = state => {
     return {
         ings: state.burgerBuilder.ingredients,
         price: state.burgerBuilder.totalPrice,
-        loading: state.order.loading
-    }
-}
+        loading: state.order.loading,
+        token: state.auth.token
+    };
+};
 
 const mapDispatchToProps = dispatch => {
     return {
-        onOrderBurger: (orderData) => dispatch(actions.purchaseBurger(orderData))
-    }
-}
+        onOrderBurger: (orderData, token) =>
+            dispatch(actions.purchaseBurger(orderData, token))
+    };
+};
 
-export default connect(mapStateToProps, mapDispatchToProps)(withErrorHandler(ContactData, axios));
+export default connect(mapStateToProps, mapDispatchToProps)(
+    withErrorHandler(ContactData, axios)
+);
