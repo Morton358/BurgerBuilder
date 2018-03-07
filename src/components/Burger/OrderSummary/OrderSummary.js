@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 class OrderSummary extends Component {
 
     componentWillUpdate() {
-        console.log('[OrderSummary] WillUpdate');
+        // console.log('[OrderSummary] WillUpdate');
     }
 
     render() {
