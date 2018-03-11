@@ -27,7 +27,7 @@ const store = createStore(
 
 ReactDOM.render(
     <Provider store={store}>
-        <BrowserRouter>
+        <BrowserRouter basename="/BurgerBuilder">
             <App />
         </BrowserRouter>
     </Provider>,
