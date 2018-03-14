@@ -1,1 +1,2 @@
-Simple Burger Builder app. I write it using React.
+Burger Builder React App.
+https://morton358.github.io/BurgerBuilder/
