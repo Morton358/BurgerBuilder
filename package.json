@@ -2,7 +2,7 @@
   "name": "udemy",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://Morton358.github.io/BurgerBuilder",
+  "homepage": "http://Morton358.github.io/BurgerBuilder",
   "dependencies": {
     "autoprefixer": "7.1.6",
     "axios": "^0.17.1",
