@@ -1,10 +1,10 @@
 .Logo {
+    align-self: center;
     background-color: white;
     border-radius: 5px;
     box-sizing: border-box;
     height: 100%;
     padding: 8px;
-    align-self: center;
 }
 
 .Logo img {
